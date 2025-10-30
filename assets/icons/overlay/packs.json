@@ -1,0 +1,181 @@
+{
+  "packs": [
+    {
+      "id": "classic",
+      "sort": 0,
+      "label": "Classic",
+      "icons": {
+        "back": "assets/icons/overlay/line-md/chevron/chevron-left.svg",
+        "forward": "assets/icons/overlay/line-md/chevron/chevron-right.svg",
+        "reload": "assets/icons/overlay/line-md/chevron/chevron-down.svg",
+        "up": "assets/icons/overlay/line-md/chevron/chevron-up.svg"
+      },
+      "animate": [
+        {
+          "attributeName": "stroke-dashoffset",
+          "from": 12,
+          "to": 0,
+          "dur": 0.3,
+          "begin": 0.0
+        }
+      ]
+    },
+    {
+      "id": "arrow",
+      "sort": 1,
+      "label": "Arrows",
+      "icons": {
+        "back": "assets/icons/overlay/line-md/arrow/arrow-left.svg",
+        "forward": "assets/icons/overlay/line-md/arrow/arrow-right.svg",
+        "reload": "assets/icons/overlay/line-md/arrow/arrow-down.svg",
+        "up": "assets/icons/overlay/line-md/arrow/arrow-up.svg"
+      },
+      "animate": [
+        {
+          "attributeName": "stroke-dashoffset",
+          "from": 20,
+          "to": 0,
+          "dur": 0.2,
+          "begin": 0.0
+        },
+        {
+          "attributeName": "stroke-dashoffset",
+          "from": 12,
+          "to": 0,
+          "dur": 0.2,
+          "begin": 0.2
+        }
+      ]
+    },
+    {
+      "id": "chevron-circle",
+      "sort": 2,
+      "label": "Chevron Circle",
+      "icons": {
+        "back": "assets/icons/overlay/line-md/chevron-circle/chevron-left-circle.svg",
+        "forward": "assets/icons/overlay/line-md/chevron-circle/chevron-right-circle.svg",
+        "reload": "assets/icons/overlay/line-md/chevron-circle/chevron-down-circle.svg",
+        "up": "assets/icons/overlay/line-md/chevron-circle/chevron-up-circle.svg"
+      },
+      "animate": [
+        {
+          "attributeName": "stroke-dashoffset",
+          "from": 64,
+          "to": 0,
+          "dur": 0.6,
+          "begin": 0.0
+        },
+        {
+          "attributeName": "stroke-dashoffset",
+          "from": 6,
+          "to": 0,
+          "dur": 0.3,
+          "begin": 0.7
+        }
+      ]
+    },
+    {
+      "id": "chevron-square",
+      "sort": 4,
+      "label": "Chevron Square",
+      "icons": {
+        "back": "assets/icons/overlay/line-md/chevron-square/chevron-left-square.svg",
+        "forward": "assets/icons/overlay/line-md/chevron-square/chevron-right-square.svg",
+        "reload": "assets/icons/overlay/line-md/chevron-square/chevron-down-square.svg",
+        "up": "assets/icons/overlay/line-md/chevron-square/chevron-up-square.svg"
+      },
+      "animate": [
+        {
+          "attributeName": "stroke-dashoffset",
+          "from": 64,
+          "to": 0,
+          "dur": 0.6,
+          "begin": 0.0
+        },
+        {
+          "attributeName": "stroke-dashoffset",
+          "from": 6,
+          "to": 0,
+          "dur": 0.3,
+          "begin": 0.7
+        }
+      ]
+    },
+    {
+      "id": "chevron-small",
+      "sort": 3,
+      "label": "Chevron Small",
+      "icons": {
+        "back": "assets/icons/overlay/line-md/chevron-small/chevron-small-left.svg",
+        "forward": "assets/icons/overlay/line-md/chevron-small/chevron-small-right.svg",
+        "reload": "assets/icons/overlay/line-md/chevron-small/chevron-small-down.svg",
+        "up": "assets/icons/overlay/line-md/chevron-small/chevron-small-up.svg"
+      },
+      "animate": [
+        {
+          "attributeName": "stroke-dashoffset",
+          "from": 10,
+          "to": 0,
+          "dur": 0.3,
+          "begin": 0.0
+        }
+      ]
+    },
+    {
+      "id": "chevron-circle-twotone",
+      "sort": 2,
+      "label": "Chevron Circle Twotone",
+      "path": "assets/icons/overlay/line-md/chevron-circle-twotone/",
+      "icons": {
+        "back": "assets/icons/overlay/line-md/chevron-circle-twotone/chevron-left-circle-twotone.svg",
+        "forward": "assets/icons/overlay/line-md/chevron-circle-twotone/chevron-right-circle-twotone.svg",
+        "reload": "assets/icons/overlay/line-md/chevron-circle-twotone/chevron-down-circle-twotone.svg",
+        "up": "assets/icons/overlay/line-md/chevron-circle-twotone/chevron-up-circle-twotone.svg"
+      },
+      "animate": [
+        {
+          "attributeName": ["stroke-dashoffset", "fill-opacity"],
+          "from": [64, 0],
+          "to": [0, 0.3],
+          "dur": [0.6, 0.15],
+          "begin": [0.0, 1.0]
+        },
+        {
+          "attributeName": "stroke-dashoffset",
+          "from": 6,
+          "to": 0,
+          "dur": 0.3,
+          "begin": 0.7
+        }
+      ]
+    }
+  ],
+
+  "refreshes": [
+    {
+      "id": "none",
+      "label": "None (use pack icon)",
+      "src": "assets/icons/overlay/line-md/blank"
+    },
+    {
+      "id": "refresh-0",
+      "label": "Refresh 0",
+      "src": "assets/icons/overlay/line-md/refresh/refresh-0.gif"
+    },
+    {
+      "id": "refresh-1",
+      "label": "Refresh 1,",
+      "src": "assets/icons/overlay/line-md/refresh/refresh-1.gif"
+    },
+    {
+      "id": "refresh-2",
+      "label": "Refresh 2",
+      "src": "assets/icons/overlay/line-md/refresh/refresh-2.gif"
+    },
+    {
+      "id": "refresh-3",
+      "label": "Refresh 3",
+      "src": "assets/icons/overlay/line-md/refresh/refresh-3.gif"
+    }
+  ]
+}
