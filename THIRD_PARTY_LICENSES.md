@@ -3,7 +3,7 @@
 This document lists external resources included with **freheSwipe**.
 
 The core source code is licensed under the **GNU General Public License v3.0 or later**  
-(see [LICENSE](LICENSE)). Some icons are distributed under their own open‑source terms, noted below.
+(see [LICENSE](LICENSE.txt)). Some icons are distributed under their own open‑source terms, noted below.
 
 ---
 

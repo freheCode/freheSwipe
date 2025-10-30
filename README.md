@@ -88,7 +88,7 @@ This project is licensed under the **GNU General Public License v3.0**.
 - ⚠️ Disclose source — make source code available when distributing  
 - ✅ Protected — cannot be closed or relicensed proprietarily
 
-© 2025 freheCode — see [LICENSE](LICENSE) for full license text.
+© 2025 freheCode — see [LICENSE](LICENSE.txt) for full license text.
 
 ---
 
