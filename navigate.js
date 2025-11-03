@@ -28,6 +28,7 @@ let settings = {
   siteRules: {},
   style: "classic",
   color: "#00A8FF",
+  scrollThreshold: 10,
 };
 
 // --- STATE ---
@@ -461,12 +462,21 @@ function updateIcons() {
   }
 }
 
-// Check if element or parent can scroll left
+// Check if element, parent, or window can scroll left
 function canScrollLeft(
   target = document.elementFromPoint(dragStart.x, dragStart.y)
 ) {
+  const threshold = settings.scrollThreshold || 5;
+
+  // Check window-level horizontal scroll first
+  if (window.scrollX > threshold) {
+    console.log("🚫 Window can scroll left, blocking back gesture");
+    return true;
+  }
+
+  // Check element-level scroll containers
   let node = target;
-  while (node && node !== document.body) {
+  while (node && node !== document.documentElement) {
     const maxScroll = node.scrollWidth - node.clientWidth;
 
     if (maxScroll > 0) {
@@ -475,21 +485,40 @@ function canScrollLeft(
         style.overflowX
       );
 
-      if (isScrollContainer && node.scrollLeft > 5) {
-        return true; // Can still scroll left
+      if (isScrollContainer && node.scrollLeft > threshold) {
+        console.log(
+          `🚫 ${node.tagName} can scroll left, blocking back gesture`
+        );
+        return true;
       }
     }
     node = node.parentNode;
   }
+
   return false;
 }
 
-// Check if element or parent can scroll right
+// Check if element, parent, or window can scroll right
 function canScrollRight(
   target = document.elementFromPoint(dragStart.x, dragStart.y)
 ) {
+  const threshold = settings.scrollThreshold || 5;
+
+  // Check window-level horizontal scroll first
+  const docWidth = Math.max(
+    document.documentElement.scrollWidth,
+    document.body.scrollWidth
+  );
+  const maxWindowScroll = docWidth - window.innerWidth;
+
+  if (maxWindowScroll > 0 && window.scrollX < maxWindowScroll - threshold) {
+    console.log("🚫 Window can scroll right, blocking forward gesture");
+    return true;
+  }
+
+  // Check element-level scroll containers
   let node = target;
-  while (node && node !== document.body) {
+  while (node && node !== document.documentElement) {
     const maxScroll = node.scrollWidth - node.clientWidth;
 
     if (maxScroll > 0) {
@@ -498,12 +527,16 @@ function canScrollRight(
         style.overflowX
       );
 
-      if (isScrollContainer && node.scrollLeft < maxScroll - 5) {
-        return true; // Can still scroll right
+      if (isScrollContainer && node.scrollLeft < maxScroll - threshold) {
+        console.log(
+          `🚫 ${node.tagName} can scroll right, blocking forward gesture`
+        );
+        return true;
       }
     }
     node = node.parentNode;
   }
+
   return false;
 }
 
