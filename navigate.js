@@ -29,9 +29,23 @@ let settings = {
   style: "classic",
   color: "#00A8FF",
   scrollThreshold: 10,
+
+  // NEW: overlay sizing options
+  overlay: {
+    sizeRatio: 0.08, // 8% of min(viewport w,h)
+    minSizePx: 48,
+    maxSizePx: 112,
+    edgePaddingRatio: 0.005, // 3% of min(viewport w,h)
+    minPaddingPx: 12,
+    maxPaddingPx: 40,
+    slideRatio: 0.75, // horizontal translate ~ 0.75 * size
+    moveRatio: 0.8, // vertical translate ~ 0.8 * size
+  },
 };
 
 // --- STATE ---
+let UI = { size: 64, pad: 24, slide: 48, move: 52 };
+let edgeStart = { top: false, bottom: false, left: false, right: false };
 let dragStart = { x: 0, y: 0, scrollY: 0 };
 let rafToken = null;
 let touchData = null;
@@ -228,12 +242,99 @@ async function buildIcons() {
       icon.style.filter = `drop-shadow(0 0 2px ${settings.color})`;
     }
   });
+
+  layoutIcons();
 }
 
 //---------------------------------------------------------------------//
 // Helpers
 //---------------------------------------------------------------------//
 const isInput = (el) => ["INPUT", "TEXTAREA", "SELECT"].includes(el?.tagName);
+
+const clamp = (n, min, max) => Math.min(max, Math.max(min, n));
+
+function computeUiMetrics() {
+  const ol = settings.overlay || {};
+  const base = Math.min(window.innerWidth, window.innerHeight) || 800;
+
+  const sizeRatio = typeof ol.sizeRatio === "number" ? ol.sizeRatio : 0.08;
+  const padRatio =
+    typeof ol.edgePaddingRatio === "number" ? ol.edgePaddingRatio : 0.03;
+
+  const size = Math.round(
+    clamp(base * sizeRatio, ol.minSizePx ?? 48, ol.maxSizePx ?? 112)
+  );
+  const pad = Math.round(
+    clamp(base * padRatio, ol.minPaddingPx ?? 12, ol.maxPaddingPx ?? 40)
+  );
+  const slide = Math.round(size * (ol.slideRatio ?? 0.75)); // left/right
+  const move = Math.round(size * (ol.moveRatio ?? 0.8)); // up/reload
+
+  return { size, pad, slide, move };
+}
+
+function layoutIcons() {
+  UI = computeUiMetrics();
+  const { size, pad } = UI;
+
+  // Size all icons
+  for (const icon of Object.values(ICONS)) {
+    icon.style.width = `${size}px`;
+    icon.style.height = `${size}px`;
+  }
+
+  // Left (center vertically, pad from left)
+  ICONS.left.style.top = `calc(50vh - ${size / 2}px)`;
+  ICONS.left.style.left = `${pad}px`;
+  ICONS.left.style.right = "";
+
+  // Right (center vertically, pad from right)
+  ICONS.right.style.top = `calc(50vh - ${size / 2}px)`;
+  ICONS.right.style.right = `${pad}px`;
+  ICONS.right.style.left = "";
+
+  // Reload (top center, pad from top)
+  ICONS.reload.style.top = `${pad}px`;
+  ICONS.reload.style.bottom = "";
+  ICONS.reload.style.left = `calc(50vw - ${size / 2}px)`;
+
+  // Up (bottom center, pad from bottom)
+  ICONS.up.style.top = "";
+  ICONS.up.style.bottom = `${pad}px`;
+  ICONS.up.style.left = `calc(50vw - ${size / 2}px)`;
+}
+
+// Sensitivity-driven distances (all scaled by viewport)
+const SENSE = {
+  minPx: 12, // floors so it's never too tiny
+  lockRatio: 0.12, // axis lock at 35% of trigger distance
+  armRatio: 0.25, // activation at 55% of trigger distance
+};
+
+function axisLen(axis) {
+  return axis === "horizontal" ? window.innerWidth : window.innerHeight;
+}
+
+// Clamp and read the trigger fraction from settings.sensitivity
+function triggerFrac(axis) {
+  const def = axis === "horizontal" ? 0.1 : 0.3;
+  const val = settings?.sensitivity?.[axis];
+  const f = typeof val === "number" ? val : def;
+  // keep within sane bounds: 3%..60% of screen
+  return Math.min(0.6, Math.max(0.03, f));
+}
+
+function triggerPx(axis) {
+  return Math.max(SENSE.minPx, axisLen(axis) * triggerFrac(axis));
+}
+
+function lockPx(axis) {
+  return Math.max(SENSE.minPx, triggerPx(axis) * SENSE.lockRatio);
+}
+
+function armPx(axis) {
+  return Math.max(SENSE.minPx, triggerPx(axis) * SENSE.armRatio);
+}
 
 function atTop(target = document.elementFromPoint(dragStart.x, dragStart.y)) {
   let node = target;
@@ -320,6 +421,16 @@ function onTouchStart(e) {
   cancelledGesture = false;
   gestureMaxProgress = 0;
   activeIcon = null;
+
+  // Snapshot edge state at touchstart (so gestures can’t arm mid-swipe)
+  const startTarget =
+    document.elementFromPoint(t.clientX, t.clientY) || e.target;
+  edgeStart = {
+    top: atTop(startTarget),
+    bottom: atBottom(startTarget),
+    left: !canScrollLeft(startTarget),
+    right: !canScrollRight(startTarget),
+  };
 }
 
 function onTouchMove(e) {
@@ -357,8 +468,8 @@ function showIcon(icon, currentProgress, maxProgress) {
     icon.style.filter = `saturate(${saturate}%) drop-shadow(0 0 2px ${settings.color})`;
   }
 
-  const maxSlide = 48;
-  const maxMove = 52;
+  const maxSlide = UI?.slide ?? 48;
+  const maxMove = UI?.move ?? 52;
 
   let transform = `scale(${scale})`;
   if (icon === ICONS.left) {
@@ -390,9 +501,13 @@ function updateIcons() {
   const absX = Math.abs(dx);
   const absY = Math.abs(dy);
 
-  // Lock in the axis on the first significant movement
-  if (!gestureAxis && (absX > 20 || absY > 20)) {
-    gestureAxis = absX > absY ? "horizontal" : "vertical";
+  // Lock in the axis on the first significant movement (sensitivity-based)
+  if (!gestureAxis) {
+    const lockX = lockPx("horizontal");
+    const lockY = lockPx("vertical");
+    if (absX > lockX || absY > lockY) {
+      gestureAxis = absX > absY ? "horizontal" : "vertical";
+    }
   }
 
   // Guard against sloppy swipes
@@ -405,30 +520,22 @@ function updateIcons() {
     return;
   }
 
-  // Lock in the ACTIVE ICON
+  // Lock in the ACTIVE ICON (sensitivity-based)
   if (!activeIcon && gestureAxis) {
+    const armX = armPx("horizontal");
+    const armY = armPx("vertical");
+
     if (gestureAxis === "horizontal") {
-      // Check for horizontal scroll containers first
-      if (dx > 20 && !canScrollLeft() && isGestureAllowed("back")) {
+      if (dx > armX && edgeStart.left && isGestureAllowed("back")) {
         activeIcon = ICONS.left;
-      } else if (dx < -20 && !canScrollRight() && isGestureAllowed("forward")) {
+      } else if (dx < -armX && edgeStart.right && isGestureAllowed("forward")) {
         activeIcon = ICONS.right;
       }
-      // In updateIcons(), replace the vertical gesture section:
     } else if (gestureAxis === "vertical") {
-      // console.log("Vertical gesture detected, dy:", dy);
-
-      if (dy > 20 && atTop() && isGestureAllowed("reload")) {
-        // console.log("✅ Reload gesture activated");
+      if (dy > armY && edgeStart.top && isGestureAllowed("reload")) {
         activeIcon = ICONS.reload;
-      } else if (dy < -20 && atBottom() && isGestureAllowed("up")) {
-        // console.log("✅ Up gesture activated");
+      } else if (dy < -armY && edgeStart.bottom && isGestureAllowed("up")) {
         activeIcon = ICONS.up;
-      } else {
-        // console.log("❌ No vertical gesture activated");
-        // console.log("  dy < -20:", dy < -20);
-        // console.log("  atBottom():", atBottom());
-        // console.log("  isGestureAllowed('up'):", isGestureAllowed("up"));
       }
     }
   }
@@ -556,19 +663,19 @@ function onTouchEnd(e) {
   let triggered = false;
 
   if (gestureAxis === "horizontal") {
-    if (dxP > H && isGestureAllowed("back")) {
+    if (dxP > H && edgeStart.left && isGestureAllowed("back")) {
       triggered = true;
       top.history.back();
-    } else if (dxP < -H && isGestureAllowed("forward")) {
+    } else if (dxP < -H && edgeStart.right && isGestureAllowed("forward")) {
       triggered = true;
       top.history.forward();
     }
   } else if (gestureAxis === "vertical") {
-    if (dyP > V && atTop() && isGestureAllowed("reload")) {
+    if (dyP > V && edgeStart.top && isGestureAllowed("reload")) {
       triggered = true;
       top.location.reload();
       // FIXED: Changed to atBottom() instead of !atTop()
-    } else if (dyP < -V && atBottom() && isGestureAllowed("up")) {
+    } else if (dyP < -V && edgeStart.bottom && isGestureAllowed("up")) {
       triggered = true;
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
@@ -589,9 +696,16 @@ async function loadSettings() {
     ...stored,
     gestures: { ...settings.gestures, ...(stored.gestures || {}) },
     sensitivity: { ...settings.sensitivity, ...(stored.sensitivity || {}) },
+    overlay: { ...settings.overlay, ...(stored.overlay || {}) },
   };
 
   console.log("✅ Settings loaded:", settings);
+}
+
+let resizeRaf = null;
+function onResize() {
+  if (resizeRaf) cancelAnimationFrame(resizeRaf);
+  resizeRaf = requestAnimationFrame(layoutIcons);
 }
 
 function addListeners() {
@@ -599,6 +713,7 @@ function addListeners() {
   document.body.addEventListener("touchmove", onTouchMove, { passive: true });
   document.body.addEventListener("touchend", onTouchEnd);
   document.body.addEventListener("touchcancel", hideIcons);
+  window.addEventListener("resize", onResize, { passive: true });
 }
 
 (async () => {
