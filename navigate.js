@@ -157,11 +157,17 @@ async function createIcon(src, alignX) {
   if (isSvg) {
     const res = await fetch(chrome.runtime.getURL(src));
     const text = await res.text();
-    const wrapper = document.createElement("div");
-    wrapper.innerHTML = text.trim();
-    el = wrapper.querySelector("svg");
+    
+    // FIXED: Parse SVG safely instead of innerHTML
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(text.trim(), "image/svg+xml");
+    el = doc.querySelector("svg");
+    
+    if (!el) {
+      console.error("Failed to parse SVG:", src);
+      return null;
+    }
   } else {
-    // FIXED: Changed "imRg" to "img"
     el = document.createElement("img");
     el.src = chrome.runtime.getURL(src);
   }
@@ -176,7 +182,7 @@ async function createIcon(src, alignX) {
     transition: "opacity 0.2s ease, filter 0.2s ease, transform 0.15s ease",
     zIndex: Z_INDEX,
     willChange: "opacity, transform",
-    pointerEvents: "none", // Prevent icons from blocking touches
+    pointerEvents: "none",
   });
 
   document.body.appendChild(el);

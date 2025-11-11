@@ -31,7 +31,7 @@ Swipe **left**, **right**, or **down** to navigate **Back**, **Forward**, or **R
 ## 🧩 Installation
 
 ### 🦊 Firefox (Add‑ons Store)
-1. Visit **[Touchscreen Swipe Navigation on AMO](https://addons.mozilla.org/)** (coming soon – placeholder).  
+1. Visit **[Touchscreen Swipe Navigation on AMO](https://addons.mozilla.org/en-US/firefox/addon/freheswipe/)**.  
 2. Click **Add to Firefox**, then confirm.  
 3. The extension icon will appear automatically in the toolbar.
 

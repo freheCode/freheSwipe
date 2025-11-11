@@ -56,7 +56,9 @@ function initializeElements() {
 // Manifest & settings
 // ------------------------------------------------------------------
 async function loadManifest() {
-  const res = await fetch(chrome.runtime.getURL("assets/icons/overlay/packs.json"));
+  const res = await fetch(
+    chrome.runtime.getURL("assets/icons/overlay/packs.json")
+  );
   manifest = await res.json();
 }
 
@@ -200,59 +202,65 @@ function applySmilAnimation(svgString, rules) {
   return serializer.serializeToString(svgEl);
 }
 
-// CHANGED: This function now uses the new applySmilAnimation helper and applies color.
 function refreshMedia(el) {
   if (el.dataset.type === "svg") {
-    // Get the animation rules stored on the element's dataset
     const animationRules = JSON.parse(el.dataset.animation || "[]");
 
     fetch(el.dataset.src)
       .then((r) => r.text())
       .then((svgText) => {
-        // Generate the final SVG with SMIL animations injected
         const animatedSvg = applySmilAnimation(svgText, animationRules);
-        el.innerHTML = animatedSvg;
 
-        // Apply the current accent color to the newly loaded SVG
-        const svg = el.querySelector("svg");
-        if (svg && cfg && cfg.color) {
-          svg.style.color = cfg.color;
+        // FIXED: Parse SVG safely instead of innerHTML
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(animatedSvg, "image/svg+xml");
+        const svg = doc.querySelector("svg");
 
-          // Apply to groups
-          svg.querySelectorAll("g").forEach((g) => {
-            if (
-              g.getAttribute("stroke") === "currentColor" ||
-              g.getAttribute("stroke") === null
-            ) {
-              g.setAttribute("stroke", cfg.color);
-            }
-            if (
-              g.getAttribute("fill") === "currentColor" ||
-              g.getAttribute("fill") === null
-            ) {
-              g.setAttribute("fill", cfg.color);
-            }
-          });
+        if (svg) {
+          el.textContent = ""; // Clear existing content
+          el.appendChild(svg);
 
-          // Apply to primitive shapes
-          svg
-            .querySelectorAll("path, circle, rect, line, polyline, polygon")
-            .forEach((el) => {
-              const stroke = el.getAttribute("stroke");
-              const fill = el.getAttribute("fill");
+          // Apply the current accent color to the newly loaded SVG
+          if (cfg && cfg.color) {
+            svg.style.color = cfg.color;
 
-              if (stroke === "currentColor" || stroke === null) {
-                el.setAttribute("stroke", cfg.color);
+            // Apply to groups
+            svg.querySelectorAll("g").forEach((g) => {
+              if (
+                g.getAttribute("stroke") === "currentColor" ||
+                g.getAttribute("stroke") === null
+              ) {
+                g.setAttribute("stroke", cfg.color);
               }
-              if (fill === "currentColor") {
-                el.setAttribute("fill", cfg.color);
+              if (
+                g.getAttribute("fill") === "currentColor" ||
+                g.getAttribute("fill") === null
+              ) {
+                g.setAttribute("fill", cfg.color);
               }
             });
+
+            // Apply to primitive shapes
+            svg
+              .querySelectorAll("path, circle, rect, line, polyline, polygon")
+              .forEach((el) => {
+                const stroke = el.getAttribute("stroke");
+                const fill = el.getAttribute("fill");
+
+                if (stroke === "currentColor" || stroke === null) {
+                  el.setAttribute("stroke", cfg.color);
+                }
+                if (fill === "currentColor") {
+                  el.setAttribute("fill", cfg.color);
+                }
+              });
+          }
+        } else {
+          el.textContent = "⚠️";
         }
       })
       .catch(() => (el.textContent = "⚠️"));
   } else if (el.dataset.type === "image") {
-    // Add a cache-busting query to re-trigger GIFs
     el.src = `${el.dataset.src}?v=${Date.now()}`;
   }
 }
