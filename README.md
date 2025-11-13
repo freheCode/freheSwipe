@@ -53,12 +53,12 @@ Swipe **left**, **right**, or **down** to navigate **Back**, **Forward**, or **R
 ## 🧩 Installation
 
 ### 🦊 Firefox (Add‑ons Store)
-1. Visit **[Touchscreen Swipe Navigation on AMO](https://addons.mozilla.org/en-US/firefox/addon/freheswipe/)**.  
+1. Visit **[freheSwipe on AMO](https://addons.mozilla.org/en-US/firefox/addon/freheswipe/)**.  
 2. Click **Add to Firefox**, then confirm.  
 3. The extension icon will appear automatically in the toolbar.
 
 ### 🌐 Chrome / Edge (Web Store)
-1. Visit **[Touchscreen Swipe Navigation on Chrome Web Store](https://chromewebstore.google.com/)** (coming soon).  
+1. Visit **[freheSwipe on Chrome Web Store](https://chromewebstore.google.com/)** (coming soon).  
 2. Click **Add to Chrome** - works in Chromium‑based browsers (Edge, Brave, etc.).  
 3. Pin the icon if you want quick access.
 

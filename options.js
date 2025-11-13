@@ -417,9 +417,9 @@ async function notifyAllTabs() {
 // ------------------------------------------------------------------
 // Config save / site overrides
 // ------------------------------------------------------------------
-function selectPack(id, element) {
+async function selectPack(id, element) {
   cfg.style = id;
-  save();
+  await save();
   [...els.packGallery.children].forEach((n) => n.classList.remove("selected"));
   element.classList.add("selected");
   element.animate(
@@ -450,9 +450,9 @@ function renderSites() {
     const remove = document.createElement("button");
     remove.className = "remove-btn";
     remove.textContent = "✕";
-    remove.onclick = () => {
+    remove.onclick = async () => {
       delete cfg.siteRules[host];
-      save();
+      await save();
       notifyAllTabs();
     };
 
@@ -464,9 +464,9 @@ function renderSites() {
       const cb = document.createElement("input");
       cb.type = "checkbox";
       cb.checked = checked;
-      cb.onchange = () => {
+      cb.onchange = async () => {
         rule[id] = cb.checked;
-        save();
+        await save();
         notifyAllTabs();
       };
       const lbl = document.createElement("label");
@@ -504,10 +504,6 @@ async function save() {
     SENSITIVITY_MAX_THRESHOLD - ((hSliderVal - 1) / 99) * SENSITIVITY_RANGE;
   cfg.sensitivity.vertical =
     SENSITIVITY_MAX_THRESHOLD - ((vSliderVal - 1) / 99) * SENSITIVITY_RANGE;
-
-  if (els.themeAuto.checked) cfg.theme = "auto";
-  else if (els.themeLight.checked) cfg.theme = "light";
-  else if (els.themeDark.checked) cfg.theme = "dark";
 
   await chrome.storage.local.set({ config: cfg });
   renderSites();
