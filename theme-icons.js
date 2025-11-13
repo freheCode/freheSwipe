@@ -54,10 +54,25 @@ async function loadThemeIcon(theme, targetElement) {
   try {
     const response = await fetch(iconUrl);
     const svgText = await response.text();
-    targetElement.innerHTML = svgText;
+    
+    // ✅ SAFE: Parse SVG using DOMParser
+    const parser = new DOMParser();
+    const svgDoc = parser.parseFromString(svgText, 'image/svg+xml');
+    const svgElement = svgDoc.documentElement;
+    
+    // Check for parsing errors
+    const parserError = svgDoc.querySelector('parsererror');
+    if (parserError) {
+      throw new Error('Invalid SVG content');
+    }
+    
+    // Clear and append the parsed SVG
+    targetElement.textContent = ''; // Clear existing content safely
+    targetElement.appendChild(svgElement);
+    
   } catch (error) {
     console.error(`Failed to load theme icon for ${theme}:`, error);
-    targetElement.innerHTML = '🎨'; // Fallback emoji
+    targetElement.textContent = '🎨'; // Fallback emoji (using textContent, not innerHTML)
   }
 }
 

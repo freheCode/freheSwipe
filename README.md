@@ -8,6 +8,7 @@ Swipe **left**, **right**, or **down** to navigate **Back**, **Forward**, or **R
 ## 📚 Table of Contents
 
 - [Features](#-features)
+- [Screenshots](#-screenshots)
 - [Installation](#-installation)
 - [Quick Start](#-quick-start)
 - [Privacy](#-privacy)
@@ -25,6 +26,27 @@ Swipe **left**, **right**, or **down** to navigate **Back**, **Forward**, or **R
 - 🔹 **Per‑Site Control** — allow or disable gestures by site or direction  
 - 🔹 **Quick Toggle Popup** — instantly disable gestures for the current page  
 - 🔹 **Full Options Page** — configure everything in a clean, intuitive UI  
+
+## 📸 Screenshots
+
+<div align="center">
+
+### Extension in Action
+
+<p>
+  <img src="images/screenshot-1.png" width="32%" alt="Swipe to navigate." />
+  <img src="images/screenshot-2.png" width="32%" alt="Disable and enable fast." />
+  <img src="images/screenshot-3.png" width="32%" alt="Navigate easily" />
+</p>
+
+<p>
+  <img src="images/screenshot-4.png" width="48%" alt="Customize" />
+  <img src="images/screenshot-5.png" width="48%" alt="Navigate to top of Website" />
+</p>
+
+
+
+</div>
 
 ---
 
