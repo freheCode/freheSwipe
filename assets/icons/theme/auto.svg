@@ -1,0 +1,24 @@
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+  stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
+  <!-- Left half: Sun (light mode) -->
+  <g>
+    <path d="M12 3 L12 1 M12 7 L12 5 M12 19 L12 17 M12 23 L12 21" opacity="0.6" />
+    <path d="M5.64 5.64 L4.22 4.22 M7 12 L5 12 M7 12 L3 12 M5.64 18.36 L4.22 19.78" opacity="0.6" />
+    <circle cx="12" cy="12" r="5" fill="none" stroke="currentColor" stroke-width="2"
+      clip-path="url(#left-half)" />
+  </g>
+
+  <!-- Right half: Moon (dark mode) -->
+  <path d="M12 2 A10 10 0 0 1 12 22 A7 7 0 0 0 12 2" fill="currentColor" opacity="0.7" />
+
+  <!-- Vertical divider -->
+  <line x1="12" y1="7" x2="12" y2="17" stroke="currentColor" stroke-width="1" opacity="0.3"
+    stroke-dasharray="1,2" />
+
+  <!-- Clip path for half circle -->
+  <defs>
+    <clipPath id="left-half">
+      <rect x="0" y="0" width="12" height="24" />
+    </clipPath>
+  </defs>
+</svg>

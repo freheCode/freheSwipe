@@ -4,8 +4,8 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="color-scheme" content="dark light" />
-    <title>Touchscreen Swipe Navigation – Options</title>
+    <meta name="color-scheme" content="light dark" />
+    <title>freheSwipe - Options</title>
     <style>
       :root {
         color-scheme: light dark;
@@ -195,11 +195,29 @@
       footer a:hover {
         text-decoration: underline;
       }
+
+      #theme-toggle:hover {
+        border-color: dodgerblue;
+        transform: scale(1.05);
+        box-shadow: 0 0 8px color-mix(in srgb, dodgerblue 50%, transparent);
+      }
+
+      #theme-toggle:active {
+        transform: scale(0.95);
+      }
+
+      #theme-icon {
+        transition: transform 0.3s ease;
+      }
+
+      #theme-toggle:hover #theme-icon {
+        transform: rotate(15deg);
+      }
     </style>
   </head>
 
   <body>
-    <h2>Touchscreen Swipe Navigation</h2>
+    <h2>freheSwipe</h2>
 
     <form>
       <section>
@@ -208,6 +226,69 @@
           ><input type="checkbox" id="enabled" /> Enable gestures
           globally</label
         >
+      </section>
+
+      <!-- <section>
+        <h3>Theme</h3>
+        <label
+          ><input type="radio" name="theme" value="auto" id="theme-auto" /> Auto
+          (System)</label
+        ><br />
+        <label
+          ><input type="radio" name="theme" value="light" id="theme-light" />
+          Light</label
+        ><br />
+        <label
+          ><input type="radio" name="theme" value="dark" id="theme-dark" />
+          Dark</label
+        >
+      </section> -->
+
+      <section>
+        <h3>Theme</h3>
+        <div style="display: flex; align-items: center; gap: 0.8rem">
+          <button
+            type="button"
+            id="theme-toggle"
+            title="Click to cycle theme"
+            style="
+              background: none;
+              border: 2px solid
+                color-mix(in srgb, currentColor 20%, transparent);
+              border-radius: 8px;
+              padding: 0.5rem;
+              cursor: pointer;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              transition: all 0.2s;
+              width: 48px;
+              height: 48px;
+            "
+          >
+            <svg
+              id="theme-icon"
+              width="28"
+              height="28"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <!-- Icons will be swapped dynamically -->
+            </svg>
+          </button>
+          <div>
+            <div style="font-weight: 600; font-size: 0.95rem" id="theme-label">
+              Auto (System)
+            </div>
+            <div style="font-size: 0.8rem; opacity: 0.7" id="theme-description">
+              Matches your system preference
+            </div>
+          </div>
+        </div>
       </section>
 
       <section>
@@ -261,6 +342,8 @@
       <button id="reset" type="button">Reset Defaults</button>
     </form>
 
+    <script src="theme.js"></script>
+    <script src="theme-icons.js"></script>
     <script src="options.js"></script>
 
     <footer>

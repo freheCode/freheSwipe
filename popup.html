@@ -4,7 +4,8 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="color-scheme" content="dark light" />
+    <meta name="color-scheme" content="light dark" />
+
     <style>
       :root {
         color-scheme: light dark;
@@ -124,11 +125,74 @@
         opacity: 0.6;
         margin-top: 0.6rem;
       }
+
+      #theme-toggle {
+        background: none;
+        border: 1.5px solid color-mix(in srgb, currentColor 20%, transparent);
+        border-radius: 5px;
+        padding: 0.25rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+        width: 28px;
+        height: 28px;
+        flex-shrink: 0;
+        margin-left: 0.5rem;
+      }
+
+      #theme-toggle:hover {
+        border-color: dodgerblue;
+        transform: scale(1.08);
+        box-shadow: 0 0 6px color-mix(in srgb, dodgerblue 50%, transparent);
+      }
+
+      #theme-toggle:active {
+        transform: scale(0.95);
+      }
+
+      #theme-icon {
+        transition: transform 0.3s ease;
+      }
+
+      #theme-toggle:hover #theme-icon {
+        transform: rotate(15deg);
+      }
     </style>
   </head>
 
   <body>
-    <h4 id="hostname">(loading...)</h4>
+    <div
+      style="
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.4rem;
+      "
+    >
+      <h4 id="hostname" style="margin: 0; flex: 1">(loading...)</h4>
+      <button
+        type="button"
+        id="theme-toggle"
+        title="Cycle theme: Auto → Light → Dark"
+      >
+        <svg
+          id="theme-icon"
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <!-- Icon will be loaded dynamically -->
+        </svg>
+      </button>
+    </div>
+
     <div id="status"></div>
 
     <label>
@@ -198,6 +262,8 @@
       </a>
     </footer>
 
+    <script src="theme.js"></script>
+    <script src="theme-icons.js"></script>
     <script src="popup.js"></script>
   </body>
 </html>

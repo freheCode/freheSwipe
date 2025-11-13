@@ -37,7 +37,7 @@ Swipe **left**, **right**, or **down** to navigate **Back**, **Forward**, or **R
 
 ### 🌐 Chrome / Edge (Web Store)
 1. Visit **[Touchscreen Swipe Navigation on Chrome Web Store](https://chromewebstore.google.com/)** (coming soon).  
-2. Click **Add to Chrome** – works in Chromium‑based browsers (Edge, Brave, etc.).  
+2. Click **Add to Chrome** - works in Chromium‑based browsers (Edge, Brave, etc.).  
 3. Pin the icon if you want quick access.
 
 ---

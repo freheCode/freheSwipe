@@ -49,6 +49,10 @@ function initializeElements() {
     addSite: document.getElementById("add-site"),
     reset: document.getElementById("reset"),
     packGallery: document.getElementById("pack-gallery"),
+    themeToggle: document.getElementById("theme-toggle"),
+    themeIcon: document.getElementById("theme-icon"),
+    themeLabel: document.getElementById("theme-label"),
+    themeDesc: document.getElementById("theme-description"),
   };
 }
 
@@ -73,6 +77,7 @@ async function restore() {
     siteRules: {},
     style: "classic",
     color: "#00A8FF",
+    theme: "auto",
   };
 
   cfg = Object.assign({}, defaults, s.config || {});
@@ -110,8 +115,21 @@ async function restore() {
   els.vRange.value = clamp(vPct);
   els.vVal.textContent = clamp(vPct);
 
+  const theme = cfg.theme ?? "auto";
+  await updateThemeUI(theme, els.themeIcon, els.themeLabel, els.themeDesc);
+  applyTheme(theme);
+
   renderSites();
   renderPackGallery();
+}
+
+// ------------------------------------------------------------------
+// Update theme UI elements
+// ------------------------------------------------------------------
+async function updateThemeUI(theme) {
+  await loadThemeIcon(theme, els.themeIcon);
+  els.themeLabel.textContent = THEME_CONFIG[theme].label;
+  els.themeDesc.textContent = THEME_CONFIG[theme].description;
 }
 
 // ------------------------------------------------------------------
@@ -487,6 +505,10 @@ async function save() {
   cfg.sensitivity.vertical =
     SENSITIVITY_MAX_THRESHOLD - ((vSliderVal - 1) / 99) * SENSITIVITY_RANGE;
 
+  if (els.themeAuto.checked) cfg.theme = "auto";
+  else if (els.themeLight.checked) cfg.theme = "light";
+  else if (els.themeDark.checked) cfg.theme = "dark";
+
   await chrome.storage.local.set({ config: cfg });
   renderSites();
 }
@@ -600,5 +622,22 @@ document.addEventListener("DOMContentLoaded", async () => {
     await chrome.storage.local.set({ config: cfg });
     updatePreviewColors(cfg.color);
     notifyAllTabs();
+  });
+
+  els.themeToggle.addEventListener("click", async () => {
+    const currentTheme = cfg.theme ?? "auto";
+    const nextTheme = THEME_CYCLE[currentTheme];
+
+    cfg.theme = nextTheme;
+    await updateThemeUI(nextTheme, els.themeIcon, els.themeLabel, els.themeDesc);
+    applyTheme(nextTheme);
+
+    await chrome.storage.local.set({ config: cfg });
+
+    // Animate the icon
+    els.themeIcon.style.transform = "rotate(360deg)";
+    setTimeout(() => {
+      els.themeIcon.style.transform = "";
+    }, 300);
   });
 });

@@ -16,6 +16,18 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+// ------------------------------------------------------------------
+// DOM elements (initialized after DOM loads)
+// ------------------------------------------------------------------
+let els = {};
+
+function initializeElements() {
+  els = {
+    themeToggle: document.getElementById("theme-toggle"),
+    themeIcon: document.getElementById("theme-icon"),
+  };
+}
+
 async function getCurrentTab() {
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
   return tab;
@@ -78,9 +90,13 @@ async function loadPopup() {
       enabled: true,
       gestures: { back: true, forward: true, reload: true, up: true },
       siteRules: {},
+      theme: "auto",
     },
     config
   );
+
+  applyTheme(cfg.theme ?? "auto");
+  await updateThemeUI(cfg.theme ?? "auto", els.themeIcon);
 
   const enabledChk = document.getElementById("global-enabled");
   const siteBtn = document.getElementById("site-toggle");
@@ -223,6 +239,12 @@ async function loadPopup() {
 
 // ✅ Show friendly message for unsupported pages
 function showUnsupportedPage(url) {
+  chrome.storage.local.get("config").then(async ({ config = {} }) => {
+    const theme = config.theme ?? "auto";
+    applyTheme(theme);
+    await updateThemeUI(theme, els.themeIcon);
+  });
+
   const st = document.getElementById("status");
   const hostnameEl = document.getElementById("hostname");
   const enabledChk = document.getElementById("global-enabled");
@@ -310,4 +332,29 @@ function updateStatus(disabled, globallyEnabled) {
   }
 }
 
-document.addEventListener("DOMContentLoaded", loadPopup);
+document.addEventListener("DOMContentLoaded", async () => {
+  initializeElements();
+  
+  await loadPopup();
+  
+  // Theme toggle
+  if (els.themeToggle) {
+    els.themeToggle.addEventListener("click", async () => {
+      const { config = {} } = await chrome.storage.local.get("config");
+      const currentTheme = config.theme ?? "auto";
+      const nextTheme = THEME_CYCLE[currentTheme];
+      
+      config.theme = nextTheme;
+      await chrome.storage.local.set({ config });
+      
+      applyTheme(nextTheme);
+      await updateThemeUI(nextTheme, els.themeIcon);
+      
+      // Animate the icon
+      els.themeIcon.style.transform = "rotate(360deg)";
+      setTimeout(() => {
+        els.themeIcon.style.transform = "";
+      }, 300);
+    });
+  }
+});
